@@ -585,6 +585,12 @@ function DataStore2.ReadOnly(dataStoreName, identifier)
 
 	dataStore.savingMethod = SavingMethods[Settings.SavingMethod].new(dataStore)
 
+	function dataStore:Cleanup()
+		ReadOnlyDataStoreCache[userId][dataStoreName] = nil
+		table.clear(self)
+		dataStore = nil -- clear ref for gc
+	end
+
 	setmetatable(dataStore, DataStoreMetatable)
 
 	if not ReadOnlyDataStoreCache[userId] then
