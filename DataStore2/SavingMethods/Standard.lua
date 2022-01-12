@@ -3,20 +3,24 @@
 -- GetAsync/UpdateAsync are then called based on the user ID
 local DataStoreServiceRetriever = require(script.Parent.Parent.DataStoreServiceRetriever)
 local Promise = require(script.Parent.Parent.Promise)
+local Serializer = require(script.Parent.Parent.Serializer)
 
 local Standard = {}
 Standard.__index = Standard
 
 function Standard:Get()
 	return Promise.async(function(resolve)
-		resolve(self.dataStore:GetAsync(self.userId))
+		local value = self.dataStore:GetAsync(self.userId)
+		local success, deserialized =  pcall(Serializer.Deserialize, Serializer, value)
+		resolve(if success then deserialized else value)
 	end)
 end
 
 function Standard:Set(value)
 	return Promise.async(function(resolve)
+		local success, serialized =  pcall(Serializer.Serialize, Serializer, value)
 		self.dataStore:UpdateAsync(self.userId, function()
-			return value
+			return if success then serialized else value
 		end)
 
 		resolve()
