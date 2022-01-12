@@ -331,6 +331,10 @@ local TypeHandlers = {
 		end,
 	},
 }
+module.SupportedTypes = {}
+for key in pairs(TypeHandlers) do
+	module.SupportedTypes[key] = true
+end
 
 function module:Sanitize(Object: any, Recursive: boolean?)
 	if TypeHandlers[typeof(Object)] then

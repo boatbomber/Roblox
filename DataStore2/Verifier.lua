@@ -1,9 +1,15 @@
 -- Written by Coercii
+local Serializer = require(script.Parent.Serializer)
 
 local Verifier = {}
 
 function Verifier.typeValid(data)
-	return type(data) ~= "userdata", typeof(data)
+	local t, to = type(data), typeof(data)
+	if t == "userdata" then
+		return Serializer.SupportedTypes[to] ~= nil
+	else
+		return true, to
+	end
 end
 
 function Verifier.scanValidity(tbl, passed, path)
